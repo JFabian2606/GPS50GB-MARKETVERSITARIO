@@ -17,7 +17,7 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, {
                 ...options,
-                maxAge: 60 * 60 * 24 * 2, // 2 días de expiración
+                maxAge: Number(process.env.NEXT_PUBLIC_SESSION_EXPIRATION_SECONDS) || 172800, // Defecto 2 días
               })
             )
           } catch {

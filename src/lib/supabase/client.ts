@@ -6,7 +6,7 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookieOptions: {
-        maxAge: 60 * 60 * 24 * 2, // 2 días de expiración
+        maxAge: Number(process.env.NEXT_PUBLIC_SESSION_EXPIRATION_SECONDS) || 172800, // Defecto 2 días
       },
     }
   )

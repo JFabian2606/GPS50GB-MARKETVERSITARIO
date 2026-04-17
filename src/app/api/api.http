@@ -1,0 +1,50 @@
+### Marketvesitario - API Tests
+### Extensión requerida: REST Client (humao.rest-client)
+
+@baseUrl = http://localhost:3000
+
+# ================================================================
+# AUTH - REGISTRO
+# ================================================================
+
+### Registrar nuevo estudiante
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "estudiante@test.com",
+  "password": "Test1234!",
+  "nombres": "Maria",
+  "apellidos": "Lopez",
+  "tipo_documento": "CC",
+  "documento_identidad": "1234567890",
+  "programa_academico": "Ingenieria de Sistemas"
+}
+
+###
+
+### Registrar sin campo obligatorio (debe retornar error 400)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "incompleto@test.com",
+  "password": "Test1234!"
+}
+
+###
+
+### Registrar con contraseña corta (debe retornar error 400)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "otro@test.com",
+  "password": "123",
+  "nombres": "Juan",
+  "apellidos": "Perez",
+  "tipo_documento": "CC",
+  "documento_identidad": "9876543210"
+}
+
+###

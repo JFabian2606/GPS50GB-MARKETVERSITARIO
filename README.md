@@ -78,3 +78,4 @@ pnpm exec supabase db reset
 ```
 
 > **Nota:** Solo el encargado de DevOps/Líder Técnico vincula el proyecto a la nube (`supabase link`) para reflejar la versión final testeada enviándola con `pnpm exec supabase db push`.
+    

@@ -23,6 +23,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      flexbox:
+        specifier: ^0.0.3
+        version: 0.0.3
       framer-motion:
         specifier: ^12.38.0
         version: 12.38.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1683,6 +1686,9 @@ packages:
 
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+
+  flexbox@0.0.3:
+    resolution: {integrity: sha512-VJnsA/9db4crCdjZ47vjBP1PAlyX/30okVPI5fCTF0KksYzYoRFW0fXB6YQj0vSju7/+moGXd2BSYeYcMuG1bw==}
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -4916,6 +4922,8 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.4.2: {}
+
+  flexbox@0.0.3: {}
 
   for-each@0.3.5:
     dependencies:

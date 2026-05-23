@@ -74,3 +74,166 @@ Content-Type: application/json
 }
 
 ###
+
+# ================================================================
+# PUBLICACIONES
+# ================================================================
+
+### Crear una publicación (requiere estar autenticado - enviar las cookies de sesión si se prueba desde aquí, o probar desde la app)
+POST {{baseUrl}}/api/publicaciones
+Content-Type: application/json
+
+{
+  "titulo": "Calculadora Científica Casio",
+  "descripcion": "Calculadora en perfecto estado, poco uso.",
+  "precio": 45000,
+  "ubicacion": "Bloque D"
+}
+
+###
+
+### Editar una publicación (requiere estar autenticado como el dueño de la publicación)
+PUT {{baseUrl}}/api/publicaciones/1
+Content-Type: application/json
+
+{
+  "titulo": "Calculadora Científica Casio (Editada)",
+  "precio": 42000,
+  "estado": "pausado"
+}
+
+###
+
+### Eliminar una publicación (requiere estar autenticado como el dueño de la publicación)
+DELETE {{baseUrl}}/api/publicaciones/1
+Content-Type: application/json
+
+###
+
+### Listar todas las publicaciones activas (No requiere autenticación)
+GET {{baseUrl}}/api/publicaciones
+Content-Type: application/json
+
+###
+
+### Listar publicaciones con filtro (ejemplo: todas)
+GET {{baseUrl}}/api/publicaciones?estado=todos&limit=10
+Content-Type: application/json
+
+###
+
+### Obtener el detalle de una publicación específica (No requiere autenticación)
+GET {{baseUrl}}/api/publicaciones/1
+Content-Type: application/json
+
+###
+
+# ================================================================
+# TUTORIAS
+# ================================================================
+
+### Crear una tutoría (requiere estar autenticado y ser tutor/admin/superadmin)
+POST {{baseUrl}}/api/tutorias
+Content-Type: application/json
+
+{
+  "titulo": "Asesoría Completa de Programación Web con Next.js",
+  "descripcion": "Clases para resolver dudas del frontend o backend, arquitectura App Router y middleware.",
+  "asignatura": "Programación Web",
+  "nivel": "Avanzado",
+  "precio": 35000
+}
+
+###
+
+### Listar todas las tutorías (No requiere autenticación)
+GET {{baseUrl}}/api/tutorias
+Content-Type: application/json
+
+###
+
+### Listar tutorías con filtros (ejemplo: buscar "Next.js")
+GET {{baseUrl}}/api/tutorias?q=Next.js&limit=5
+Content-Type: application/json
+
+###
+
+### Obtener el detalle de una tutoría específica (No requiere autenticación)
+GET {{baseUrl}}/api/tutorias/1
+Content-Type: application/json
+
+###
+
+### Editar una tutoría (requiere estar autenticado como el dueño de la tutoría o admin)
+PUT {{baseUrl}}/api/tutorias/1
+Content-Type: application/json
+
+{
+  "titulo": "Asesoría Completa de Programación Web con Next.js (Actualizada)",
+  "precio": 38000
+}
+
+###
+
+### Eliminar una tutoría (requiere estar autenticado como el dueño de la tutoría o admin)
+DELETE {{baseUrl}}/api/tutorias/1
+Content-Type: application/json
+
+###
+
+# ================================================================
+# SOLICITUDES DE TUTORÍA
+# ================================================================
+
+### Crear una solicitud de tutoría (requiere estar autenticado)
+POST {{baseUrl}}/api/solicitudes
+Content-Type: application/json
+
+{
+  "id_tutoria": 1,
+  "mensaje": "Hola tutor, me gustaría tomar esta asesoría para repasar los temas de cálculo de cara al examen final."
+}
+
+###
+
+### Listar mis solicitudes de tutoría enviadas (estudiante)
+GET {{baseUrl}}/api/solicitudes?tipo=enviadas
+Content-Type: application/json
+
+###
+
+### Listar solicitudes de tutoría recibidas para mis tutorías (tutor)
+GET {{baseUrl}}/api/solicitudes?tipo=recibidas
+Content-Type: application/json
+
+###
+
+### Listar todas las solicitudes (remitente y destinatario combinados)
+GET {{baseUrl}}/api/solicitudes
+Content-Type: application/json
+
+###
+
+### Obtener el detalle de una solicitud de tutoría específica
+GET {{baseUrl}}/api/solicitudes/1
+Content-Type: application/json
+
+###
+
+### Gestionar una solicitud de tutoría (Aceptar / Rechazar - solo el tutor asignado o admin)
+PUT {{baseUrl}}/api/solicitudes/1
+Content-Type: application/json
+
+{
+  "estado": "aceptada"
+}
+
+###
+
+### Cancelar o eliminar una solicitud de tutoría (solo el remitente o admin)
+DELETE {{baseUrl}}/api/solicitudes/1
+Content-Type: application/json
+
+###
+
+

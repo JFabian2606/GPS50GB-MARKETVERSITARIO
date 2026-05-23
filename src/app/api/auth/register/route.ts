@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
     // Email válido
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'El formato del correo electrónico es inválido.' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Formato de correo electrónico inválido.' },
+        { status: 400 }
+      )
     }
 
     // Contraseña fuerte (Mín 8 chars, 1 mayúscula, 1 número)

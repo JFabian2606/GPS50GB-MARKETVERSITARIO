@@ -142,3 +142,16 @@
     @apply font-sans;
   }
 }
+
+.error-text {
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid #fca5a5;
+}

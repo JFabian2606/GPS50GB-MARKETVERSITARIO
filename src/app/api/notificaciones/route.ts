@@ -72,6 +72,26 @@ export async function GET(request: Request) {
       }
     }
 
+    // Buscar solicitudes de tutor rechazadas para el usuario actual
+    const { data: solicitudesRechazadas, error: errRechazadas } = await supabase
+      .from('solicitudes_tutor')
+      .select('id_solicitud, fecha')
+      .eq('id_usuario', user.id)
+      .eq('estado', 'rechazada');
+
+    if (!errRechazadas && solicitudesRechazadas && solicitudesRechazadas.length > 0) {
+      solicitudesRechazadas.forEach((s: any) => {
+        notificaciones.push({
+          id: `tutor-rechazada-${s.id_solicitud}`,
+          tipo: 'tutor_rechazada',
+          titulo: 'Solicitud de Tutor Rechazada',
+          mensaje: `Tu solicitud para ser tutor oficial no fue aprobada. Puedes volver a intentarlo desde tu perfil.`,
+          fecha: s.fecha,
+          link: `/usuarios/${user.id}`
+        });
+      });
+    }
+
     // Buscar intenciones pendientes de confirmación (comprador)
     const { data: intencionesPendientes, error: err3 } = await supabase
       .from('intenciones_compra')

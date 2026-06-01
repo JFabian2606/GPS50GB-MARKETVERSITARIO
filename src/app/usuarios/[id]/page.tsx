@@ -475,21 +475,25 @@ export default function PerfilUsuario() {
                               <span>Ofrecer Tutoría</span>
                             </Link>
                           ) : profile?.rol === "estudiante" ? (
-                            tutorRequest ? (
-                              <div className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[13px] border ${
-                                tutorRequest.estado === 'pendiente' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                                tutorRequest.estado === 'rechazada' ? 'bg-rose-50 text-rose-600 border-rose-200' : ''
-                              }`}>
-                                {tutorRequest.estado === 'pendiente' ? 'Solicitud de Tutor Pendiente' : 'Solicitud de Tutor Rechazada'}
+                            tutorRequest?.estado === 'pendiente' ? (
+                              <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[13px] border bg-amber-50 text-amber-600 border-amber-200">
+                                Solicitud de Tutor Pendiente
                               </div>
                             ) : (
-                              <button 
-                                onClick={() => setShowTutorModal(true)}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm"
-                              >
-                                <GraduationCap className="w-4 h-4" />
-                                <span>Solicitar ser Tutor</span>
-                              </button>
+                              <div className="flex items-center gap-3">
+                                {tutorRequest?.estado === 'rechazada' && (
+                                  <span className="text-[11px] font-bold text-rose-500 bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100 hidden sm:inline-block">
+                                    Solicitud anterior rechazada
+                                  </span>
+                                )}
+                                <button 
+                                  onClick={() => setShowTutorModal(true)}
+                                  className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm"
+                                >
+                                  <GraduationCap className="w-4 h-4" />
+                                  <span>{tutorRequest?.estado === 'rechazada' ? 'Volver a Solicitar' : 'Solicitar ser Tutor'}</span>
+                                </button>
+                              </div>
                             )
                           ) : null}
                         </>

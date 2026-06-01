@@ -74,6 +74,15 @@ export default function PerfilUsuario() {
 
   const isOwnProfile = currentUser?.id === id;
 
+  // Estados para editar perfil
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editNombres, setEditNombres] = useState("");
+  const [editApellidos, setEditApellidos] = useState("");
+  const [editProgramaAcademico, setEditProgramaAcademico] = useState("");
+  const [editGenero, setEditGenero] = useState("");
+  const [editTelefono, setEditTelefono] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -319,6 +328,47 @@ export default function PerfilUsuario() {
       alert('Error uploading avatar: ' + error.message);
     } finally {
       setUploadingAvatar(false);
+    }
+  };
+  const handleSaveProfile = async () => {
+    if (!editNombres.trim()) return alert("El nombre es requerido.");
+    if (!editApellidos.trim()) return alert("El apellido es requerido.");
+
+    setSavingProfile(true);
+    try {
+      const supabase = createClient();
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          nombres: editNombres.trim(),
+          apellidos: editApellidos.trim(),
+          programa_academico: editProgramaAcademico.trim() || null,
+          genero: editGenero || null,
+          telefono: editTelefono.trim() || null
+        })
+        .eq('id', id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Actualizar estados locales
+      const updatedData = {
+        ...profile,
+        nombres: editNombres.trim(),
+        apellidos: editApellidos.trim(),
+        programa_academico: editProgramaAcademico.trim() || null,
+        genero: editGenero || null,
+        telefono: editTelefono.trim() || null
+      };
+
+      setProfile(updatedData);
+      setUserProfile(updatedData);
+      setIsEditingProfile(false);
+    } catch (error: any) {
+      alert('Error al guardar el perfil: ' + error.message);
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -577,25 +627,130 @@ export default function PerfilUsuario() {
                             exit={{ opacity: 0, y: -10 }}
                             className="bg-white rounded-2xl border border-slate-100 p-6 space-y-6 shadow-sm"
                           >
-                            <h2 className="text-[16px] font-bold text-slate-800 border-b border-slate-50 pb-3">Detalle del Perfil</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nombres</p>
-                                <p className="text-[14px] font-semibold text-slate-700">{profile.nombres}</p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Apellidos</p>
-                                <p className="text-[14px] font-semibold text-slate-700">{profile.apellidos}</p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Programa Académico</p>
-                                <p className="text-[14px] font-semibold text-slate-700">{profile.programa_academico || "No especificado"}</p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Género</p>
-                                <p className="text-[14px] font-semibold text-slate-700">{profile.genero || "No especificado"}</p>
-                              </div>
+                            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+                              <h2 className="text-[16px] font-bold text-slate-800">Detalle del Perfil</h2>
+                              {isOwnProfile && !isEditingProfile && (
+                                <button 
+                                  onClick={() => {
+                                    setEditNombres(profile.nombres || "");
+                                    setEditApellidos(profile.apellidos || "");
+                                    setEditProgramaAcademico(profile.programa_academico || "");
+                                    setEditGenero(profile.genero || "");
+                                    setEditTelefono(profile.telefono || "");
+                                    setIsEditingProfile(true);
+                                  }}
+                                  className="text-[12px] font-bold text-[#534AB7] hover:text-[#43399b] transition-colors"
+                                >
+                                  Editar Perfil
+                                </button>
+                              )}
                             </div>
+
+                            {isEditingProfile ? (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Nombres</label>
+                                    <input 
+                                      type="text" 
+                                      value={editNombres} 
+                                      onChange={(e) => setEditNombres(e.target.value)}
+                                      className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-700 font-semibold focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/10 transition-all"
+                                      placeholder="Nombres"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Apellidos</label>
+                                    <input 
+                                      type="text" 
+                                      value={editApellidos} 
+                                      onChange={(e) => setEditApellidos(e.target.value)}
+                                      className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-700 font-semibold focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/10 transition-all"
+                                      placeholder="Apellidos"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Programa Académico</label>
+                                    <input 
+                                      type="text" 
+                                      value={editProgramaAcademico} 
+                                      onChange={(e) => setEditProgramaAcademico(e.target.value)}
+                                      className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-700 font-semibold focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/10 transition-all"
+                                      placeholder="Ej. Ingeniería de Sistemas"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Género</label>
+                                    <select 
+                                      value={editGenero} 
+                                      onChange={(e) => setEditGenero(e.target.value)}
+                                      className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-700 font-semibold focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/10 transition-all"
+                                    >
+                                      <option value="">No especificado</option>
+                                      <option value="Masculino">Masculino</option>
+                                      <option value="Femenino">Femenino</option>
+                                      <option value="Otro">Otro</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Teléfono</label>
+                                    <input 
+                                      type="text" 
+                                      value={editTelefono} 
+                                      onChange={(e) => setEditTelefono(e.target.value)}
+                                      className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-700 font-semibold focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/10 transition-all"
+                                      placeholder="Ej. 3123456789"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-3 pt-3 justify-end border-t border-slate-50">
+                                  <button
+                                    onClick={() => setIsEditingProfile(false)}
+                                    className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl font-bold text-[12px] hover:bg-slate-50 transition-colors"
+                                    disabled={savingProfile}
+                                  >
+                                    Cancelar
+                                  </button>
+                                  <button
+                                    onClick={handleSaveProfile}
+                                    className="flex items-center gap-2 px-5 py-2 bg-[#534AB7] hover:bg-[#43399b] text-white rounded-xl font-bold text-[12px] transition-colors shadow-sm disabled:opacity-50"
+                                    disabled={savingProfile}
+                                  >
+                                    {savingProfile ? (
+                                      <>
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                        <span>Guardando...</span>
+                                      </>
+                                    ) : (
+                                      <span>Guardar Cambios</span>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nombres</p>
+                                  <p className="text-[14px] font-semibold text-slate-700">{profile.nombres}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Apellidos</p>
+                                  <p className="text-[14px] font-semibold text-slate-700">{profile.apellidos}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Programa Académico</p>
+                                  <p className="text-[14px] font-semibold text-slate-700">{profile.programa_academico || "No especificado"}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Género</p>
+                                  <p className="text-[14px] font-semibold text-slate-700">{profile.genero || "No especificado"}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Teléfono</p>
+                                  <p className="text-[14px] font-semibold text-slate-700">{profile.telefono || "No especificado"}</p>
+                                </div>
+                              </div>
+                            )}
                           </motion.div>
                         )}
 

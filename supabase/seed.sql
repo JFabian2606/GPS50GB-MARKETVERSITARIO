@@ -7,8 +7,8 @@
 -- luego se actualiza el profile directamente desde la BD.
 -- ============================================================
 
--- Habilitar extensión para hashear contraseñas
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Habilitar extensión para hashear contraseñas en el esquema correcto
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
 -- UUIDs fijos para los usuarios de prueba
 -- superadmin : 00000000-0000-0000-0000-000000000001
@@ -44,7 +44,7 @@ INSERT INTO auth.users (
     'authenticated',
     'authenticated',
     'superadmin@marketversitario.com',
-    crypt('Test1234!', gen_salt('bf')),
+    extensions.crypt('Test1234!', extensions.gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nombres":"Super","apellidos":"Admin"}',
@@ -56,7 +56,7 @@ INSERT INTO auth.users (
     'authenticated',
     'authenticated',
     'admin@marketversitario.com',
-    crypt('Test1234!', gen_salt('bf')),
+    extensions.crypt('Test1234!', extensions.gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nombres":"Admin","apellidos":"Prueba"}',
@@ -68,7 +68,7 @@ INSERT INTO auth.users (
     'authenticated',
     'authenticated',
     'estudiante@marketversitario.com',
-    crypt('Test1234!', gen_salt('bf')),
+    extensions.crypt('Test1234!', extensions.gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nombres":"Juan","apellidos":"Estudiante"}',
@@ -80,7 +80,7 @@ INSERT INTO auth.users (
     'authenticated',
     'authenticated',
     'tutor@marketversitario.com',
-    crypt('Test1234!', gen_salt('bf')),
+    extensions.crypt('Test1234!', extensions.gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"provider":"email","providers":["email"]}',
     '{"nombres":"Ana","apellidos":"Tutor"}',

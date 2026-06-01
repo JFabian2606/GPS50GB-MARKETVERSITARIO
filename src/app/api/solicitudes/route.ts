@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     // 2. Extraer datos del cuerpo
     const body = await request.json();
-    const { id_tutoria, mensaje } = body;
+    const { id_tutoria, mensaje, fecha_agenda, hora_inicio, hora_fin } = body;
 
     // 3. Validar campos
     if (!id_tutoria) {
@@ -82,7 +82,10 @@ export async function POST(request: Request) {
           id_tutoria: idTutoriaNum,
           mensaje: mensaje?.trim() || null,
           estado: 'pendiente',
-          fecha: new Date().toISOString()
+          fecha: new Date().toISOString(),
+          fecha_agenda: fecha_agenda || null,
+          hora_inicio: hora_inicio || null,
+          hora_fin: hora_fin || null
         }
       ])
       .select()

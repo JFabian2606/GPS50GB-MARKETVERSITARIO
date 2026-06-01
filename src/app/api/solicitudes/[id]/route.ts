@@ -123,7 +123,8 @@ export async function PUT(
     const isAdmin = profile?.rol === 'admin' || profile?.rol === 'superadmin';
     const isTutorOfTutoria = existingSolicitud.tutoria?.id_usuario === user.id;
 
-    // Solo el tutor que imparte la tutoría o un admin puede cambiar el estado de la solicitud
+    // TH55: Solo el tutor que imparte la tutoría o un administrador autorizado
+    // puede cambiar el estado de la solicitud (aceptada / rechazada)
     if (!isTutorOfTutoria && !isAdmin) {
       return NextResponse.json(
         { error: 'No tienes permiso para gestionar esta solicitud.' },

@@ -124,17 +124,10 @@ CREATE TABLE valoracion_tutoria (
 
 -- ----------------------------------------------------------------
 -- 8. PAGOS
--- Registro de transacciones realizadas en la plataforma.
+-- NOTA: La tabla 'pagos' se crea en la migración 20260525000000_sistema_destacados.sql
+-- con la estructura correcta para el sistema de publicaciones destacadas.
 -- ----------------------------------------------------------------
-CREATE TABLE pagos (
-    id_pago         SERIAL PRIMARY KEY,
-    id_usuario      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-    id_publicacion  INT REFERENCES publicacion(id_publicacion) ON DELETE SET NULL,
-    monto           NUMERIC(10, 2) NOT NULL,
-    metodo_pago     VARCHAR(50),
-    estado          VARCHAR(50) NOT NULL DEFAULT 'pendiente', -- 'pendiente' | 'completado' | 'fallido'
-    fecha           TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+
 
 -- ----------------------------------------------------------------
 -- 9. FUNCIÓN + TRIGGER: Auto-actualizar updated_at

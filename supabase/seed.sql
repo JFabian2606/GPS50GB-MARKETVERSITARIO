@@ -73,6 +73,18 @@ INSERT INTO auth.users (
     '{"provider":"email","providers":["email"]}',
     '{"nombres":"Juan","apellidos":"Estudiante"}',
     NOW(), NOW(), '', '', '', ''
+),
+(
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000004',
+    'authenticated',
+    'authenticated',
+    'tutor@marketversitario.com',
+    crypt('Test1234!', gen_salt('bf')),
+    NOW(), NOW(), NOW(),
+    '{"provider":"email","providers":["email"]}',
+    '{"nombres":"Ana","apellidos":"Tutor"}',
+    NOW(), NOW(), '', '', '', ''
 );
 
 -- ----------------------------------------------------------------
@@ -103,6 +115,11 @@ INSERT INTO profiles (
     '00000000-0000-0000-0000-000000000003',
     'CC', '1000000003', 'Juan', 'Estudiante',
     'Masculino', '3000000003', 'Ingeniería de Sistemas', 'estudiante'
+),
+(
+    '00000000-0000-0000-0000-000000000004',
+    'CC', '1000000004', 'Ana', 'Tutor',
+    'Femenino', '3000000004', 'Matemáticas', 'tutor'
 );
 
 -- ----------------------------------------------------------------
@@ -149,15 +166,6 @@ INSERT INTO publicacion (
     1, 'activo', NOW() - INTERVAL '5 hours'
 ),
 (
-    'Tutoría de Cálculo Diferencial e Integral',
-    'Ofrezco clases particulares de Cálculo I y II. Soy estudiante de 7mo semestre de Ingeniería. Precio por hora, grupos de hasta 3 personas. Horario flexible.',
-    25000,
-    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop',
-    'Biblioteca Central - Sala 3',
-    '00000000-0000-0000-0000-000000000003',
-    5, 'activo', NOW() - INTERVAL '6 hours'
-),
-(
     'Bata de Laboratorio Talla M',
     'Bata blanca de laboratorio, talla M, usada solo 2 veces, en perfecto estado. Sin manchas. Marca Halyard.',
     30000,
@@ -195,10 +203,47 @@ INSERT INTO publicacion (
 ),
 (
     'Mochila Totto Impermeable 30L',
-    'Mochila color negro, impermeable, con compartimento para laptop hasta 15\". Bolsillos organizadores, en muy buen estado. La uso desde hace 1 año.',
+    'Mochila color negro, impermeable, con compartimento para laptop hasta 15". Bolsillos organizadores, en muy buen estado. La uso desde hace 1 año.',
     80000,
     'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop',
     'Entrada Principal',
     '00000000-0000-0000-0000-000000000003',
     6, 'reservado', NOW() - INTERVAL '3 days'
+);
+
+-- ----------------------------------------------------------------
+-- 4. Tutorías de prueba
+-- ----------------------------------------------------------------
+INSERT INTO tutoria (
+    titulo, descripcion, asignatura, nivel, precio, id_usuario, created_at
+) VALUES
+(
+    'Tutoría de Cálculo Diferencial e Integral',
+    'Ofrezco clases particulares de Cálculo I y II. Soy estudiante de 7mo semestre de Ingeniería. Precio por hora, grupos de hasta 3 personas. Horario flexible.',
+    'Cálculo', 'Universitario', 25000,
+    '00000000-0000-0000-0000-000000000004', NOW() - INTERVAL '6 hours'
+),
+(
+    'Programación en Python desde Cero',
+    'Aprende a programar en Python con enfoque en ciencia de datos. Clases prácticas con ejercicios reales.',
+    'Programación', 'Básico', 35000,
+    '00000000-0000-0000-0000-000000000004', NOW() - INTERVAL '1 day'
+);
+
+-- ----------------------------------------------------------------
+-- 5. Solicitudes para probar la campanita
+-- ----------------------------------------------------------------
+
+-- Solicitud de Juan Estudiante para la tutoría de Ana Tutor
+INSERT INTO solicitudes (
+    id_usuario, id_tutoria, mensaje, estado, fecha
+) VALUES (
+    '00000000-0000-0000-0000-000000000003', 1, 'Hola, me gustaría agendar una hora para el viernes', 'pendiente', NOW() - INTERVAL '2 hours'
+);
+
+-- Solicitud de Juan Estudiante para convertirse en tutor (para Admin)
+INSERT INTO solicitudes_tutor (
+    id_usuario, mensaje, estado, fecha
+) VALUES (
+    '00000000-0000-0000-0000-000000000003', 'Me gustaría dar tutorías de Física ya que tengo un buen promedio.', 'pendiente', NOW() - INTERVAL '1 day'
 );

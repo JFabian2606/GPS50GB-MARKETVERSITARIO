@@ -11,6 +11,8 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Sidebar from '@/components/layout/Sidebar';
+import Header from '@/components/layout/Header';
 
 export default function GestionUsuarios() {
   const router = useRouter();
@@ -205,118 +207,21 @@ export default function GestionUsuarios() {
     >
       
       {/* SIDEBAR IZQUIERDA */}
-      <aside className="w-64 bg-white border-r border-slate-100 flex flex-col justify-between shrink-0 z-20 hidden lg:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div>
-          {/* Logo */}
-          <div className="h-20 flex items-center px-8 border-b border-slate-50">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6055D0] to-[#534AB7] flex items-center justify-center shadow-md shadow-indigo-500/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-[18px] text-slate-800 tracking-tight">Market<span className="text-[#534AB7]">Versitario</span></span>
-            </div>
-          </div>
-
-          <div className="px-5 py-6">
-            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Navegación</p>
-            <nav className="space-y-1.5">
-              {userProfile && !isAdmin && (
-                <Link href="/" className="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl font-medium text-[14px] transition-colors">
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Explorar Feed</span>
-                </Link>
-              )}
-              {userProfile && (
-                <Link href="/publicaciones" className="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl font-medium text-[14px] transition-colors">
-                  <Package className="w-4 h-4" />
-                  <span>{isAdmin ? 'Publicaciones' : 'Mis Publicaciones'}</span>
-                </Link>
-              )}
-              {userProfile && isAdmin && (
-                <Link href="/usuarios" className="flex items-center gap-3 px-3 py-2.5 bg-[#F8F7FF] text-[#534AB7] rounded-xl font-semibold text-[14px] transition-colors">
-                  <Users className="w-4 h-4" />
-                  <span>Usuarios</span>
-                </Link>
-              )}
-              {userProfile && !isAdmin && (
-                <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl font-medium text-[14px] transition-colors">
-                  <Heart className="w-4 h-4" />
-                  <span>Guardados</span>
-                </a>
-              )}
-            </nav>
-          </div>
-        </div>
-
-        {/* Menú Inferior */}
-        <div className="px-5 py-6 border-t border-slate-50">
-          <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Ajustes</p>
-          <nav className="space-y-1.5">
-            <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl font-medium text-[14px] transition-colors">
-              <Settings className="w-4 h-4" />
-              <span>Configuración</span>
-            </a>
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl font-medium text-[14px] transition-colors mt-2">
-              <LogOut className="w-4 h-4" />
-              <span>Cerrar Sesión</span>
-            </button>
-          </nav>
-        </div>
-      </aside>
+      <Sidebar userProfile={userProfile} userAuth={userAuth} />
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex-1 flex flex-col min-w-0">
         
         {/* Topbar */}
-        <header className="h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-30">
-          
-          {/* Barra de Búsqueda */}
-          <div className="flex-1 max-w-2xl relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, correo o carrera..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-11 pl-11 pr-10 bg-slate-100/70 border-transparent rounded-full focus:bg-white focus:border-[#534AB7]/30 focus:ring-2 focus:ring-[#534AB7]/10 transition-all text-[14px] text-slate-700 outline-none placeholder:text-slate-400"
-            />
-            <AnimatePresence>
-              {searchQuery && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.15 }}
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-300 hover:bg-slate-400 flex items-center justify-center text-white transition-colors"
-                >
-                  <span className="text-[10px] font-bold leading-none">✕</span>
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* User Widgets */}
-          <div className="flex items-center gap-4 ml-6">
-            <button className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="h-8 w-[1px] bg-slate-200 mx-1 hidden sm:block"></div>
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#6055D0] to-[#534AB7] flex items-center justify-center text-white font-bold text-[14px] border-2 border-white shadow-sm uppercase">
-                {userProfile?.nombres?.charAt(0) || userAuth?.email?.charAt(0) || "U"}
-              </div>
-              <div className="hidden sm:block">
-                <p className="text-[13px] font-bold text-slate-700 group-hover:text-[#534AB7] transition-colors">
-                  {userProfile ? `${userProfile.nombres} ${userProfile.apellidos}` : "Usuario"}
-                </p>
-                <p className="text-[11px] text-slate-400 font-medium capitalize">{userProfile?.rol || "Estudiante"}</p>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
-            </div>
-          </div>
-        </header>
+        <Header 
+          userProfile={userProfile} 
+          userAuth={userAuth} 
+          showSearch={true}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isSearching={false}
+          title="Gestión de Usuarios"
+        />
 
         {/* Contenido Listado */}
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 scrollbar-thin">

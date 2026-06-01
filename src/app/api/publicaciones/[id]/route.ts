@@ -26,10 +26,10 @@ export async function PUT(
       );
     }
 
-    // 2. Verificar que la publicación existe y pertenece al usuario actual
+    // 2. Verificar que la publicación existe
     const { data: existingPost, error: fetchError } = await supabase
       .from('publicacion')
-      .select('id_usuario')
+      .select('id_usuario, estado')
       .eq('id_publicacion', id)
       .single();
 
@@ -40,16 +40,63 @@ export async function PUT(
       );
     }
 
+    // 3. Extraer datos a actualizar
+    const body = await request.json();
+    const { titulo, descripcion, precio, estado, imagen, ubicacion, id_categoria, accion } = body;
+
+    // Sistema de confianza: permitir que comprador marque como comprado
+    if (accion === 'marcar_comprado') {
+      // Solo compradores (no vendedores) pueden marcar como comprado
+      if (existingPost.id_usuario === user.id) {
+        return NextResponse.json(
+          { error: 'El vendedor no puede marcar su propia publicación como comprada.' },
+          { status: 400 }
+        );
+      }
+
+      // Verificar que la publicación esté disponible
+      if (existingPost.estado !== 'activo' && existingPost.estado !== 'disponible') {
+        return NextResponse.json(
+          { error: 'Esta publicación ya no está disponible.' },
+          { status: 400 }
+        );
+      }
+
+      // Marcar como vendido por el comprador
+      const { data, error } = await supabase
+        .from('publicacion')
+        .update({
+          estado: 'vendido',
+          comprador_id: user.id,
+          fecha_venta: new Date().toISOString(),
+          marcado_por: 'comprador',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id_publicacion', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error marcando como comprado:', error);
+        return NextResponse.json(
+          { error: 'Error al marcar como comprado.', details: error.message },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json(
+        { message: 'Publicación marcada como comprada exitosamente', data },
+        { status: 200 }
+      );
+    }
+
+    // Para ediciones normales, solo el vendedor puede editar
     if (existingPost.id_usuario !== user.id) {
       return NextResponse.json(
         { error: 'No tienes permiso para editar esta publicación.' },
         { status: 403 }
       );
     }
-
-    // 3. Extraer datos a actualizar
-    const body = await request.json();
-    const { titulo, descripcion, precio, estado, imagen, ubicacion, id_categoria } = body;
 
     // Validación básica: Si envían título, no puede estar vacío
     if (titulo !== undefined && (typeof titulo !== 'string' || titulo.trim() === '')) {
@@ -84,7 +131,7 @@ export async function PUT(
       .from('publicacion')
       .update(updateData)
       .eq('id_publicacion', id)
-      .select('*, categorias(nombre)')
+      .select()
       .single();
 
     if (error) {
@@ -205,7 +252,7 @@ export async function GET(
       .from('publicacion')
       .select(`
         *,
-        perfil:profiles(nombres, apellidos, programa_academico, telefono),
+        perfil:profiles!publicacion_id_usuario_fkey(nombres, apellidos, programa_academico, telefono),
         categorias(nombre)
       `)
       .eq('id_publicacion', id)

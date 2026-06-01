@@ -34,10 +34,10 @@ export async function GET() {
       .from('tutoria')
       .select('*', { count: 'exact', head: true });
 
-    // 2. Obtener total ingresos por destaques
+    // 2. Obtener total ingresos por destaques y pagos para gráfica
     const { data: pagos } = await supabase
       .from('pagos')
-      .select('monto')
+      .select('monto, created_at')
       .eq('estado', 'completado');
 
     const ingresosDestaques = (pagos || []).reduce((sum, p) => sum + parseFloat(p.monto as any), 0);
@@ -61,14 +61,22 @@ export async function GET() {
       }
     });
 
-    // 4. Datos simulados premium para graficar tendencias históricas
-    const ventasMensuales = [
-      { mes: 'Ene', ingresos: 450000 },
-      { mes: 'Feb', ingresos: 620000 },
-      { mes: 'Mar', ingresos: 890000 },
-      { mes: 'Abr', ingresos: 1200000 },
-      { mes: 'May', ingresos: ingresosDestaques > 0 ? ingresosDestaques : 350000 }
-    ];
+    // 4. Calcular ventas reales de los últimos 5 meses
+    const mesesNombres = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const now = new Date();
+    const ventasMensuales = [];
+    
+    for (let i = 4; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = mesesNombres[d.getMonth()];
+      
+      const ingresosMes = (pagos || []).filter(p => {
+        const pd = new Date(p.created_at);
+        return pd.getMonth() === d.getMonth() && pd.getFullYear() === d.getFullYear();
+      }).reduce((sum, p) => sum + parseFloat(p.monto as any), 0);
+
+      ventasMensuales.push({ mes: monthName, ingresos: ingresosMes });
+    }
 
     const categoriasPopulares = [
       { name: 'Tecnología', value: 45 },

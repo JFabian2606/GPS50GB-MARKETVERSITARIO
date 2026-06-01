@@ -87,8 +87,21 @@ export default function AdminDashboard() {
 
   const r = metrics?.resumen || {};
   const roles = metrics?.roles || {};
-  const ventas = metrics?.ventasMensuales || [];
+  const ventas = metrics?.ventasMensuales || [
+    { mes: '', ingresos: 0 }, { mes: '', ingresos: 0 }, { mes: '', ingresos: 0 }, { mes: '', ingresos: 0 }, { mes: '', ingresos: 0 }
+  ];
   const categorias = metrics?.categoriasPopulares || [];
+
+  // Calcular puntos dinámicos para la gráfica SVG (viewBox: 0 0 500 120)
+  const maxIngreso = Math.max(...ventas.map((v: any) => v.ingresos || 0), 100);
+  const xCoords = [30, 140, 250, 360, 470];
+  const points = ventas.map((v: any, i: number) => ({
+    x: xCoords[i],
+    y: 110 - ((v.ingresos || 0) / maxIngreso) * 100 // Y: 110 (min) to 10 (max)
+  }));
+  
+  const linePathD = points.length === 5 ? `M ${points.map((p: any) => `${p.x} ${p.y}`).join(' L ')}` : "M 30 110 L 140 110 L 250 110 L 360 110 L 470 110";
+  const areaPathD = points.length === 5 ? `${linePathD} L 470 120 L 30 120 Z` : "M 30 110 L 140 110 L 250 110 L 360 110 L 470 110 L 470 120 L 30 120 Z";
 
   return (
     <div 
@@ -167,7 +180,7 @@ export default function AdminDashboard() {
                       <TrendingUp className="w-4 h-4 text-emerald-500" />
                       Crecimiento Mensual de Destacados
                     </h3>
-                    <p className="text-[11px] text-slate-400">Ingresos simulados vs reales generados por mes</p>
+                    <p className="text-[11px] text-slate-400">Ingresos reales generados por mes</p>
                   </div>
                   <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-3 py-1 rounded-lg">
                     Últimos 5 Meses
@@ -189,23 +202,21 @@ export default function AdminDashboard() {
 
                     {/* Area under the line */}
                     <path
-                      d="M 30 110 L 140 85 L 250 65 L 360 30 L 470 70 L 470 120 L 30 120 Z"
+                      d={areaPathD}
                       fill="url(#bentoChartGrad)"
                     />
                     {/* Line path */}
                     <path
-                      d="M 30 110 L 140 85 L 250 65 L 360 30 L 470 70"
+                      d={linePathD}
                       fill="none"
                       stroke="#534AB7"
                       strokeWidth="3"
                       strokeLinecap="round"
                     />
                     {/* Data dots */}
-                    <circle cx="30" cy="110" r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
-                    <circle cx="140" cy="85" r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
-                    <circle cx="250" cy="65" r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
-                    <circle cx="360" cy="30" r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
-                    <circle cx="470" cy="70" r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
+                    {points.length === 5 && points.map((p: any, idx: number) => (
+                      <circle key={idx} cx={p.x} cy={p.y} r="4.5" fill="#534AB7" stroke="#ffffff" strokeWidth="1.5" />
+                    ))}
                   </svg>
                   {/* X Axis Labels */}
                   <div className="flex justify-between px-6 text-[10px] font-bold text-slate-400 mt-2">
